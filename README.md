@@ -1,5 +1,5 @@
 # YahooFinance.NET
-Download historical end of day stock data and historical dividend data
+Download historical end of day stock data and historical dividend data via Yahoo
 
 Install via NUGET
 ```
