@@ -8,10 +8,10 @@ Install-Package YahooFinance.NET
 
 Usage
 ```
-var exchange = "ASX";
-var stockCode "AFI";
-var yahooFinance = new YahooFinance.NET.YahooFinance();
-var yahooStockCode = yahooFinance.GetYahooStockCode(exchange, symbol);
-var yahooPriceHistory = yahooFinance.GetHistoricalPriceData(yahooStockCode);
-var yahooDividendHistory = yahooFinance.GetHistoricalDividendData(yahooStockCode);
+string exchange = "ASX";
+string stockCode "AFI";
+YahooFinance.NET.YahooFinance yahooFinance = new YahooFinance.NET.YahooFinance();
+string yahooStockCode = yahooFinance.GetYahooStockCode(exchange, symbol);
+List<YahooHistoricalPriceData> yahooPriceHistory = yahooFinance.GetHistoricalPriceData(yahooStockCode);
+List<HistoricalDividendData> yahooDividendHistory = yahooFinance.GetHistoricalDividendData(yahooStockCode);
 ```
