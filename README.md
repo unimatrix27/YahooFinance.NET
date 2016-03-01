@@ -10,7 +10,7 @@ Usage
 ```
 var exchange = "ASX";
 var stockCode "AFI";
-var yahooFinance = new YahooFinance();
+var yahooFinance = new YahooFinance.NET.YahooFinance();
 var yahooStockCode = yahooFinance.GetYahooStockCode(exchange, symbol);
 var yahooPriceHistory = yahooFinance.GetHistoricalPriceData(yahooStockCode);
 var yahooDividendHistory = yahooFinance.GetHistoricalDividendData(yahooStockCode);
