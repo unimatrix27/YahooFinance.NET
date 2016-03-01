@@ -13,5 +13,5 @@ string stockCode "AFI";
 YahooFinance.NET.YahooFinance yahooFinance = new YahooFinance.NET.YahooFinance();
 string yahooStockCode = yahooFinance.GetYahooStockCode(exchange, symbol);
 List<YahooHistoricalPriceData> yahooPriceHistory = yahooFinance.GetHistoricalPriceData(yahooStockCode);
-List<HistoricalDividendData> yahooDividendHistory = yahooFinance.GetHistoricalDividendData(yahooStockCode);
+List<YahooHistoricalDividendData> yahooDividendHistory = yahooFinance.GetHistoricalDividendData(yahooStockCode);
 ```
