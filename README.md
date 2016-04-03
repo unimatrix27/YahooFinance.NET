@@ -7,7 +7,7 @@ Install-Package YahooFinance.NET
 ```
 
 Usage
-```
+```csharp
 using YahooFinance.NET;
 
 string exchange = "ASX";
