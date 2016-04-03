@@ -14,7 +14,7 @@ namespace YahooFinance.NET
 		private string GetYahooExchangeSuffix(string exchange)
 		{
 			string suffix;
-			return _exchanges.TryGetValue(exchange, out suffix) ? suffix : string.Empty;
+			return _exchanges.TryGetValue(exchange.ToUpperInvariant(), out suffix) ? suffix : string.Empty;
 		}
 
 		private readonly Dictionary<string, string> _exchanges = new Dictionary<string, string>()
