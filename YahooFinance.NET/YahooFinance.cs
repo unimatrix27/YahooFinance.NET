@@ -193,13 +193,8 @@ namespace YahooFinance.NET
 
 		public string GetYahooStockCode(string exchange, string code)
 		{
-			switch (exchange)
-			{
-				case "ASX":
-					return $"{code}.AX";
-				default:
-					return code;
-			}
+			var exchangeHelper = new YahooExchangeHelper();
+			return exchangeHelper.GetYahooStockCode(exchange, code);
 		}
 	}
 }
