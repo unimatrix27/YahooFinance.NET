@@ -30,5 +30,13 @@ namespace YahooFinance.NET.Tests
 			var yahooStockCode = x.GetYahooStockCode("asx", "AFI");
 			Assert.Equal("AFI.AX", yahooStockCode);
 		}
+
+		[Fact]
+		public void TestLowerCaseSymbol()
+		{
+			var x = new YahooFinanceClient();
+			var yahooStockCode = x.GetYahooStockCode("ASX", "afi");
+			Assert.Equal("AFI.AX", yahooStockCode);
+		}
 	}
 }

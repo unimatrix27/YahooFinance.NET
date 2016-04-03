@@ -8,7 +8,9 @@ namespace YahooFinance.NET
 		{
 			var exchangeSuffix = GetYahooExchangeSuffix(exchange);
 
-			return !string.IsNullOrEmpty(exchangeSuffix) ? $"{code}.{exchangeSuffix}" : code;
+			var yahooStockCode = !string.IsNullOrEmpty(exchangeSuffix) ? $"{code}.{exchangeSuffix}" : code;
+
+			return yahooStockCode.ToUpperInvariant();
 		}
 
 		private string GetYahooExchangeSuffix(string exchange)
