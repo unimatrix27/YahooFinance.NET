@@ -18,24 +18,24 @@ namespace YahooFinance.NET.Tests
 		[Fact]
 		public void TestUppercase()
 		{
-			var x = new YahooFinanceClient();
-			var yahooStockCode = x.GetYahooStockCode("ASX", "AFI");
+			var yahooFinanceClient = new YahooFinanceClient();
+			var yahooStockCode = yahooFinanceClient.GetYahooStockCode("ASX", "AFI");
 			Assert.Equal("AFI.AX", yahooStockCode);
 		}
 
 		[Fact]
 		public void TestLowerCaseExchange()
 		{
-			var x = new YahooFinanceClient();
-			var yahooStockCode = x.GetYahooStockCode("asx", "AFI");
+			var yahooFinanceClient = new YahooFinanceClient();
+			var yahooStockCode = yahooFinanceClient.GetYahooStockCode("asx", "AFI");
 			Assert.Equal("AFI.AX", yahooStockCode);
 		}
 
 		[Fact]
 		public void TestLowerCaseSymbol()
 		{
-			var x = new YahooFinanceClient();
-			var yahooStockCode = x.GetYahooStockCode("ASX", "afi");
+			var yahooFinanceClient = new YahooFinanceClient();
+			var yahooStockCode = yahooFinanceClient.GetYahooStockCode("ASX", "afi");
 			Assert.Equal("AFI.AX", yahooStockCode);
 		}
 	}
