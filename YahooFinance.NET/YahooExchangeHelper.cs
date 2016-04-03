@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace YahooFinance.NET
 {
@@ -16,7 +17,12 @@ namespace YahooFinance.NET
 		private string GetYahooExchangeSuffix(string exchange)
 		{
 			string suffix;
-			return _exchanges.TryGetValue(exchange.ToUpperInvariant(), out suffix) ? suffix : string.Empty;
+			if (_exchanges.TryGetValue(exchange.ToUpperInvariant(), out suffix))
+			{
+				return suffix;
+			}
+
+			throw new Exception($"The \"{exchange.ToUpperInvariant()}\" exchange is not supported.");
 		}
 
 		private readonly Dictionary<string, string> _exchanges = new Dictionary<string, string>()

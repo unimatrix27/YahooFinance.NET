@@ -38,5 +38,14 @@ namespace YahooFinance.NET.Tests
 			var yahooStockCode = yahooFinanceClient.GetYahooStockCode("ASX", "afi");
 			Assert.Equal("AFI.AX", yahooStockCode);
 		}
+
+		[Fact]
+		public void TestInvalidExchange()
+		{
+			var exchange = "ABC";
+			var yahooFinanceClient = new YahooFinanceClient();
+			var exception = Assert.Throws<Exception>(() => yahooFinanceClient.GetYahooStockCode("ABC", "AFI"));
+			Assert.Equal($"The \"{exchange}\" exchange is not supported.", exception.Message);
+		}
 	}
 }
