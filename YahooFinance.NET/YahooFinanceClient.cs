@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Net.Http;
 
@@ -83,13 +84,13 @@ namespace YahooFinance.NET
 
 				var newPriceData = new YahooHistoricalPriceData
 				{
-					Date = DateTime.Parse(values[0]),
-					Open = decimal.Parse(values[1]),
-					High = decimal.Parse(values[2]),
-					Low = decimal.Parse(values[3]),
-					Close = decimal.Parse(values[4]),
-					Volume = int.Parse(values[5]),
-					AdjClose = decimal.Parse(values[6])
+					Date = DateTime.Parse(values[0], CultureInfo.InvariantCulture),
+					Open = decimal.Parse(values[1], CultureInfo.InvariantCulture),
+					High = decimal.Parse(values[2], CultureInfo.InvariantCulture),
+					Low = decimal.Parse(values[3], CultureInfo.InvariantCulture),
+					Close = decimal.Parse(values[4], CultureInfo.InvariantCulture),
+					Volume = int.Parse(values[5], CultureInfo.InvariantCulture),
+					AdjClose = decimal.Parse(values[6], CultureInfo.InvariantCulture)
 				};
 				historicalPriceData.Add(newPriceData);
 			}
@@ -115,8 +116,8 @@ namespace YahooFinance.NET
 
 				var newDividendData = new YahooHistoricalDividendData
 				{
-					Date = DateTime.Parse(values[0]),
-					Dividend = decimal.Parse(values[1]),
+					Date = DateTime.Parse(values[0], CultureInfo.InvariantCulture),
+					Dividend = decimal.Parse(values[1], CultureInfo.InvariantCulture),
 				};
 				historicalDevidendData.Add(newDividendData);
 			}
