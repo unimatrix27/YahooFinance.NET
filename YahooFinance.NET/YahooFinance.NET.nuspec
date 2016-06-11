@@ -8,7 +8,6 @@
     <owners>$author$</owners>
     <licenseUrl>https://github.com/ZacMarcus/YahooFinance.NET/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/ZacMarcus/YahooFinance.NET</projectUrl>
-    <iconUrl></iconUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
     <summary>$description$</summary>
