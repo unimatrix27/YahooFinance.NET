@@ -12,9 +12,9 @@ using YahooFinance.NET;
 
 string exchange = "ASX";
 string stockCode "AFI";
-string yahooStockCode = yahooFinance.GetYahooStockCode(exchange, symbol);
 
 YahooFinanceClient yahooFinance = new YahooFinanceClient();
+string yahooStockCode = yahooFinance.GetYahooStockCode(exchange, symbol);
 List<YahooHistoricalPriceData> yahooPriceHistory = yahooFinance.GetHistoricalPriceData(yahooStockCode);
 List<YahooHistoricalDividendData> yahooDividendHistory = yahooFinance.GetHistoricalDividendData(yahooStockCode);
 ```
