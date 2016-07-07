@@ -10,7 +10,7 @@ namespace YahooFinance.NET
 	{
 		private const int MinimumDateRangeDays = -30;
 
-		private const string BaseUrl = "http://ichart.finance.yahoo.com/table.csv?s=";
+		private const string BaseUrl = "http://real-chart.finance.yahoo.com/table.csv?s=";
 
 		private enum HistoryType
 		{
