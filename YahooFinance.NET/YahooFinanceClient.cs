@@ -105,7 +105,7 @@ namespace YahooFinance.NET
 					High = decimal.Parse(values[2], CultureInfo.InvariantCulture),
 					Low = decimal.Parse(values[3], CultureInfo.InvariantCulture),
 					Close = decimal.Parse(values[4], CultureInfo.InvariantCulture),
-					Volume = int.Parse(values[5], CultureInfo.InvariantCulture),
+					Volume = long.Parse(values[5], CultureInfo.InvariantCulture),
 					AdjClose = decimal.Parse(values[6], CultureInfo.InvariantCulture)
 				};
 				historicalPriceData.Add(newPriceData);
@@ -151,7 +151,10 @@ namespace YahooFinance.NET
 				{
 					var historicalData = response.Content.ReadAsStringAsync().Result;
 
-					return historicalData;
+                    if (response.IsSuccessStatusCode)
+                        return historicalData;
+                    else
+                        return string.Empty;
 				}
 			}
 		}
