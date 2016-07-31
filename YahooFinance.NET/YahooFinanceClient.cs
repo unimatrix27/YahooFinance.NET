@@ -25,32 +25,33 @@ namespace YahooFinance.NET
 			return GetHistoricalPriceData(yahooStockCode, null, null, HistoryType.Month);
 		}
 
-        public List<YahooHistoricalPriceData> GetMonthlyHistoricalPriceData(string yahooStockCode, DateTime startDate)
-        {
-            return GetHistoricalPriceData(yahooStockCode, startDate, null, HistoryType.Month);
-        }
+		public List<YahooHistoricalPriceData> GetMonthlyHistoricalPriceData(string yahooStockCode, DateTime startDate)
+		{
+			return GetHistoricalPriceData(yahooStockCode, startDate, DateTime.Today, HistoryType.Month);
+		}
 
-        public List<YahooHistoricalPriceData> GetMonthlyHistoricalPriceData(string yahooStockCode, DateTime startDate, DateTime endDate)
-        {
-            return GetHistoricalPriceData(yahooStockCode, startDate, endDate, HistoryType.Month);
-        }
+		public List<YahooHistoricalPriceData> GetMonthlyHistoricalPriceData(string yahooStockCode, DateTime startDate, DateTime endDate)
+		{
+			return GetHistoricalPriceData(yahooStockCode, startDate, endDate, HistoryType.Month);
+		}
 
-        public List<YahooHistoricalPriceData> GetWeeklyHistoricalPriceData(string yahooStockCode)
+		public List<YahooHistoricalPriceData> GetWeeklyHistoricalPriceData(string yahooStockCode)
 		{
 			return GetHistoricalPriceData(yahooStockCode, null, null, HistoryType.Week);
 		}
 
-        public List<YahooHistoricalPriceData> GetWeeklyHistoricalPriceData(string yahooStockCode, DateTime startDate)
-        {
-            return GetHistoricalPriceData(yahooStockCode, startDate, null, HistoryType.Week);
-        }
+		public List<YahooHistoricalPriceData> GetWeeklyHistoricalPriceData(string yahooStockCode, DateTime startDate)
+		{
+			return GetHistoricalPriceData(yahooStockCode, startDate, DateTime.Today, HistoryType.Week);
+		}
 
-        public List<YahooHistoricalPriceData> GetWeeklyHistoricalPriceData(string yahooStockCode, DateTime startDate, DateTime endDate)
-        {
-            return GetHistoricalPriceData(yahooStockCode, startDate, endDate, HistoryType.Week);
-        }
+		public List<YahooHistoricalPriceData> GetWeeklyHistoricalPriceData(string yahooStockCode, DateTime startDate,
+			DateTime endDate)
+		{
+			return GetHistoricalPriceData(yahooStockCode, startDate, endDate, HistoryType.Week);
+		}
 
-        public List<YahooHistoricalPriceData> GetDailyHistoricalPriceData(string yahooStockCode)
+		public List<YahooHistoricalPriceData> GetDailyHistoricalPriceData(string yahooStockCode)
 		{
 			return GetHistoricalPriceData(yahooStockCode, null, null, HistoryType.Day);
 		}
@@ -60,12 +61,14 @@ namespace YahooFinance.NET
 			return GetHistoricalPriceData(yahooStockCode, startDate, DateTime.Today, HistoryType.Day);
 		}
 
-		public List<YahooHistoricalPriceData> GetDailyHistoricalPriceData(string yahooStockCode, DateTime startDate, DateTime endDate)
+		public List<YahooHistoricalPriceData> GetDailyHistoricalPriceData(string yahooStockCode, DateTime startDate,
+			DateTime endDate)
 		{
 			return GetHistoricalPriceData(yahooStockCode, startDate, endDate, HistoryType.Day);
 		}
 
-		private List<YahooHistoricalPriceData> GetHistoricalPriceData(string yahooStockCode, DateTime? startDate, DateTime? endDate, HistoryType historyType)
+		private List<YahooHistoricalPriceData> GetHistoricalPriceData(string yahooStockCode, DateTime? startDate,
+			DateTime? endDate, HistoryType historyType)
 		{
 			var dateRangeOption = string.Empty;
 			var addDateRangeOption = startDate.HasValue && endDate.HasValue;
@@ -151,10 +154,10 @@ namespace YahooFinance.NET
 				{
 					var historicalData = response.Content.ReadAsStringAsync().Result;
 
-                    if (response.IsSuccessStatusCode)
-                        return historicalData;
-                    else
-                        return string.Empty;
+					if (response.IsSuccessStatusCode)
+						return historicalData;
+					else
+						return string.Empty;
 				}
 			}
 		}
@@ -193,7 +196,7 @@ namespace YahooFinance.NET
 
 		private string GetStartDate(DateTime date)
 		{
-            // API uses zero-based month numbering
+			// API uses zero-based month numbering
 			var month = $"&a={date.Month - 1}";
 			var day = $"&b={date.Day}";
 			var year = $"&c={date.Year}";
@@ -204,8 +207,8 @@ namespace YahooFinance.NET
 
 		private string GetEndDate(DateTime date)
 		{
-            // API uses zero-based month numbering
-            var month = $"&d={date.Month - 1}";
+			// API uses zero-based month numbering
+			var month = $"&d={date.Month - 1}";
 			var day = $"&e={date.Day}";
 			var year = $"&f={date.Year}";
 

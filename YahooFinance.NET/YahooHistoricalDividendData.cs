@@ -2,7 +2,7 @@
 
 namespace YahooFinance.NET
 {
-    [Serializable]
+	[Serializable]
 	public class YahooHistoricalDividendData
 	{
 		public DateTime Date { get; set; }
