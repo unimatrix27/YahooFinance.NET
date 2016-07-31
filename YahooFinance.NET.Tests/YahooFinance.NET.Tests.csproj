@@ -68,6 +68,7 @@
   <ItemGroup>
     <Compile Include="GetYahooStockCodeTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="YahooFinanceClientTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

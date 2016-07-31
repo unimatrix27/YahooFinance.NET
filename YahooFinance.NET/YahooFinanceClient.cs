@@ -8,8 +8,6 @@ namespace YahooFinance.NET
 {
 	public class YahooFinanceClient
 	{
-		private const int MinimumDateRangeDays = -30;
-
 		private const string BaseUrl = "http://real-chart.finance.yahoo.com/table.csv?s=";
 
 		private enum HistoryType
@@ -20,76 +18,55 @@ namespace YahooFinance.NET
 			Month,
 		}
 
-		public List<YahooHistoricalPriceData> GetMonthlyHistoricalPriceData(string yahooStockCode)
+		public string GetYahooStockCode(string exchange, string code)
 		{
-			return GetHistoricalPriceData(yahooStockCode, null, null, HistoryType.Month);
+			var exchangeHelper = new YahooExchangeHelper();
+			return exchangeHelper.GetYahooStockCode(exchange, code);
 		}
 
-		public List<YahooHistoricalPriceData> GetMonthlyHistoricalPriceData(string yahooStockCode, DateTime startDate)
+		public List<YahooHistoricalPriceData> GetDailyHistoricalPriceData(string yahooStockCode, DateTime? startDate = null, DateTime? endDate = null)
 		{
-			return GetHistoricalPriceData(yahooStockCode, startDate, DateTime.Today, HistoryType.Month);
+			return GetHistoricalPriceData(yahooStockCode, HistoryType.Day, startDate, endDate);
 		}
 
-		public List<YahooHistoricalPriceData> GetMonthlyHistoricalPriceData(string yahooStockCode, DateTime startDate, DateTime endDate)
+		public List<YahooHistoricalPriceData> GetWeeklyHistoricalPriceData(string yahooStockCode, DateTime? startDate = null, DateTime? endDate = null)
 		{
-			return GetHistoricalPriceData(yahooStockCode, startDate, endDate, HistoryType.Month);
+			return GetHistoricalPriceData(yahooStockCode, HistoryType.Week, startDate, endDate);
 		}
 
-		public List<YahooHistoricalPriceData> GetWeeklyHistoricalPriceData(string yahooStockCode)
+		public List<YahooHistoricalPriceData> GetMonthlyHistoricalPriceData(string yahooStockCode, DateTime? startDate = null, DateTime? endDate = null)
 		{
-			return GetHistoricalPriceData(yahooStockCode, null, null, HistoryType.Week);
+			return GetHistoricalPriceData(yahooStockCode, HistoryType.Month, startDate, endDate);
 		}
 
-		public List<YahooHistoricalPriceData> GetWeeklyHistoricalPriceData(string yahooStockCode, DateTime startDate)
+		public List<YahooHistoricalDividendData> GetHistoricalDividendData(string yahooStockCode, DateTime? startDate = null, DateTime? endDate = null)
 		{
-			return GetHistoricalPriceData(yahooStockCode, startDate, DateTime.Today, HistoryType.Week);
-		}
+			var dividendHistoryCsv = GetHistoricalDataAsCsv(yahooStockCode, HistoryType.DividendHistory, startDate, endDate);
 
-		public List<YahooHistoricalPriceData> GetWeeklyHistoricalPriceData(string yahooStockCode, DateTime startDate,
-			DateTime endDate)
-		{
-			return GetHistoricalPriceData(yahooStockCode, startDate, endDate, HistoryType.Week);
-		}
-
-		public List<YahooHistoricalPriceData> GetDailyHistoricalPriceData(string yahooStockCode)
-		{
-			return GetHistoricalPriceData(yahooStockCode, null, null, HistoryType.Day);
-		}
-
-		public List<YahooHistoricalPriceData> GetDailyHistoricalPriceData(string yahooStockCode, DateTime startDate)
-		{
-			return GetHistoricalPriceData(yahooStockCode, startDate, DateTime.Today, HistoryType.Day);
-		}
-
-		public List<YahooHistoricalPriceData> GetDailyHistoricalPriceData(string yahooStockCode, DateTime startDate,
-			DateTime endDate)
-		{
-			return GetHistoricalPriceData(yahooStockCode, startDate, endDate, HistoryType.Day);
-		}
-
-		private List<YahooHistoricalPriceData> GetHistoricalPriceData(string yahooStockCode, DateTime? startDate,
-			DateTime? endDate, HistoryType historyType)
-		{
-			var dateRangeOption = string.Empty;
-			var addDateRangeOption = startDate.HasValue && endDate.HasValue;
-			if (addDateRangeOption)
+			var historicalDevidendData = new List<YahooHistoricalDividendData>();
+			foreach (var line in dividendHistoryCsv.Split('\n').Skip(1))
 			{
-				var startDateValue = startDate.Value;
-				var endDateValue = endDate.Value;
-
-				//date range must be at least 30 days or the API will return a 404 error
-				var dateRangeIsSmallerThenMinimum = startDateValue > endDateValue.AddDays(MinimumDateRangeDays);
-				if (dateRangeIsSmallerThenMinimum)
+				if (string.IsNullOrEmpty(line))
 				{
-					startDateValue = endDateValue.AddDays(MinimumDateRangeDays);
+					continue;
 				}
 
-				dateRangeOption = GetDateRangeOption(startDateValue, endDateValue);
+				var values = line.Split(',');
+
+				var newDividendData = new YahooHistoricalDividendData
+				{
+					Date = DateTime.Parse(values[0], CultureInfo.InvariantCulture),
+					Dividend = decimal.Parse(values[1], CultureInfo.InvariantCulture),
+				};
+				historicalDevidendData.Add(newDividendData);
 			}
 
-			var historyTypeOption = GetHistoryType(historyType);
-			var options = $"{dateRangeOption}{historyTypeOption}";
-			var historicalDataCsv = YahooApiRequest(yahooStockCode, options);
+			return historicalDevidendData;
+		}
+
+		private List<YahooHistoricalPriceData> GetHistoricalPriceData(string yahooStockCode, HistoryType historyType, DateTime? startDate, DateTime? endDate)
+		{
+			var historicalDataCsv = GetHistoricalDataAsCsv(yahooStockCode, historyType, startDate, endDate);
 
 			var historicalPriceData = new List<YahooHistoricalPriceData>();
 			foreach (var line in historicalDataCsv.Split('\n').Skip(1))
@@ -117,31 +94,24 @@ namespace YahooFinance.NET
 			return historicalPriceData;
 		}
 
-		//date range is not supported for dividend data
-		public List<YahooHistoricalDividendData> GetHistoricalDividendData(string yahooStockCode)
+		private string GetHistoricalDataAsCsv(string yahooStockCode, HistoryType historyType, DateTime? startDate, DateTime? endDate)
 		{
-			var dividendHistoryOption = GetHistoryType(HistoryType.DividendHistory);
-			var dividendHistoryCsv = YahooApiRequest(yahooStockCode, dividendHistoryOption);
-
-			var historicalDevidendData = new List<YahooHistoricalDividendData>();
-			foreach (var line in dividendHistoryCsv.Split('\n').Skip(1))
+			var dateRangeOption = string.Empty;
+			var addDateRangeOption = startDate.HasValue && endDate.HasValue;
+			if (addDateRangeOption)
 			{
-				if (string.IsNullOrEmpty(line))
-				{
-					continue;
-				}
+				var startDateValue = startDate.Value;
+				var endDateValue = endDate.Value;
 
-				var values = line.Split(',');
-
-				var newDividendData = new YahooHistoricalDividendData
-				{
-					Date = DateTime.Parse(values[0], CultureInfo.InvariantCulture),
-					Dividend = decimal.Parse(values[1], CultureInfo.InvariantCulture),
-				};
-				historicalDevidendData.Add(newDividendData);
+				dateRangeOption = GetDateRangeOption(startDateValue, endDateValue);
 			}
 
-			return historicalDevidendData;
+			var historyTypeOption = GetHistoryType(historyType);
+			var options = $"{dateRangeOption}{historyTypeOption}";
+
+			var historicalDataCsv = YahooApiRequest(yahooStockCode, options);
+
+			return historicalDataCsv;
 		}
 
 		private string YahooApiRequest(string yahooStockCode, string options)
@@ -155,9 +125,11 @@ namespace YahooFinance.NET
 					var historicalData = response.Content.ReadAsStringAsync().Result;
 
 					if (response.IsSuccessStatusCode)
+					{
 						return historicalData;
-					else
-						return string.Empty;
+					}
+
+					return string.Empty;
 				}
 			}
 		}
@@ -214,12 +186,6 @@ namespace YahooFinance.NET
 
 			var option = $"{month}{day}{year}";
 			return option;
-		}
-
-		public string GetYahooStockCode(string exchange, string code)
-		{
-			var exchangeHelper = new YahooExchangeHelper();
-			return exchangeHelper.GetYahooStockCode(exchange, code);
 		}
 	}
 }
