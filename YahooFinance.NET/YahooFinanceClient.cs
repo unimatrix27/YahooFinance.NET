@@ -18,68 +18,24 @@ namespace YahooFinance.NET
 			Month,
 		}
 
-		public List<YahooHistoricalPriceData> GetMonthlyHistoricalPriceData(string yahooStockCode)
+		public List<YahooHistoricalPriceData> GetDailyHistoricalPriceData(string yahooStockCode, DateTime? startDate = null, DateTime? endDate = null)
 		{
-			return GetHistoricalPriceData(yahooStockCode, null, null, HistoryType.Month);
+			return GetHistoricalPriceData(yahooStockCode, HistoryType.Day, startDate, endDate);
 		}
 
-		public List<YahooHistoricalPriceData> GetMonthlyHistoricalPriceData(string yahooStockCode, DateTime startDate)
+		public List<YahooHistoricalPriceData> GetWeeklyHistoricalPriceData(string yahooStockCode, DateTime? startDate = null, DateTime? endDate = null)
 		{
-			return GetHistoricalPriceData(yahooStockCode, startDate, DateTime.Today, HistoryType.Month);
+			return GetHistoricalPriceData(yahooStockCode, HistoryType.Week, startDate, endDate);
 		}
 
-		public List<YahooHistoricalPriceData> GetMonthlyHistoricalPriceData(string yahooStockCode, DateTime startDate, DateTime endDate)
+		public List<YahooHistoricalPriceData> GetMonthlyHistoricalPriceData(string yahooStockCode, DateTime? startDate = null, DateTime? endDate = null)
 		{
-			return GetHistoricalPriceData(yahooStockCode, startDate, endDate, HistoryType.Month);
+			return GetHistoricalPriceData(yahooStockCode, HistoryType.Month, startDate, endDate);
 		}
 
-		public List<YahooHistoricalPriceData> GetWeeklyHistoricalPriceData(string yahooStockCode)
+		private List<YahooHistoricalPriceData> GetHistoricalPriceData(string yahooStockCode, HistoryType historyType, DateTime? startDate = null, DateTime? endDate = null)
 		{
-			return GetHistoricalPriceData(yahooStockCode, null, null, HistoryType.Week);
-		}
-
-		public List<YahooHistoricalPriceData> GetWeeklyHistoricalPriceData(string yahooStockCode, DateTime startDate)
-		{
-			return GetHistoricalPriceData(yahooStockCode, startDate, DateTime.Today, HistoryType.Week);
-		}
-
-		public List<YahooHistoricalPriceData> GetWeeklyHistoricalPriceData(string yahooStockCode, DateTime startDate,
-			DateTime endDate)
-		{
-			return GetHistoricalPriceData(yahooStockCode, startDate, endDate, HistoryType.Week);
-		}
-
-		public List<YahooHistoricalPriceData> GetDailyHistoricalPriceData(string yahooStockCode)
-		{
-			return GetHistoricalPriceData(yahooStockCode, null, null, HistoryType.Day);
-		}
-
-		public List<YahooHistoricalPriceData> GetDailyHistoricalPriceData(string yahooStockCode, DateTime startDate)
-		{
-			return GetHistoricalPriceData(yahooStockCode, startDate, DateTime.Today, HistoryType.Day);
-		}
-
-		public List<YahooHistoricalPriceData> GetDailyHistoricalPriceData(string yahooStockCode, DateTime startDate,
-			DateTime endDate)
-		{
-			return GetHistoricalPriceData(yahooStockCode, startDate, endDate, HistoryType.Day);
-		}
-
-		private List<YahooHistoricalPriceData> GetHistoricalPriceData(string yahooStockCode, DateTime? startDate, DateTime? endDate, HistoryType historyType)
-		{
-			var dateRangeOption = string.Empty;
-			var addDateRangeOption = startDate.HasValue && endDate.HasValue;
-			if (addDateRangeOption)
-			{
-				var startDateValue = startDate.Value;
-				var endDateValue = endDate.Value;
-
-				dateRangeOption = GetDateRangeOption(startDateValue, endDateValue);
-			}
-
-			var historyTypeOption = GetHistoryType(historyType);
-			var options = $"{dateRangeOption}{historyTypeOption}";
-			var historicalDataCsv = YahooApiRequest(yahooStockCode, options);
+			var historicalDataCsv = GetHistoricalDataAsCsv(yahooStockCode, historyType, startDate, endDate);
 
 			var historicalPriceData = new List<YahooHistoricalPriceData>();
 			foreach (var line in historicalDataCsv.Split('\n').Skip(1))
@@ -107,11 +63,29 @@ namespace YahooFinance.NET
 			return historicalPriceData;
 		}
 
-		//date range is not supported for dividend data
-		public List<YahooHistoricalDividendData> GetHistoricalDividendData(string yahooStockCode)
+		private string GetHistoricalDataAsCsv(string yahooStockCode, HistoryType historyType, DateTime? startDate, DateTime? endDate)
 		{
-			var dividendHistoryOption = GetHistoryType(HistoryType.DividendHistory);
-			var dividendHistoryCsv = YahooApiRequest(yahooStockCode, dividendHistoryOption);
+			var dateRangeOption = string.Empty;
+			var addDateRangeOption = startDate.HasValue && endDate.HasValue;
+			if (addDateRangeOption)
+			{
+				var startDateValue = startDate.Value;
+				var endDateValue = endDate.Value;
+
+				dateRangeOption = GetDateRangeOption(startDateValue, endDateValue);
+			}
+
+			var historyTypeOption = GetHistoryType(historyType);
+			var options = $"{dateRangeOption}{historyTypeOption}";
+
+			var historicalDataCsv = YahooApiRequest(yahooStockCode, options);
+
+			return historicalDataCsv;
+		}
+
+		public List<YahooHistoricalDividendData> GetHistoricalDividendData(string yahooStockCode, DateTime? startDate = null, DateTime? endDate = null)
+		{
+			var dividendHistoryCsv = GetHistoricalDataAsCsv(yahooStockCode, HistoryType.DividendHistory, startDate, endDate);
 
 			var historicalDevidendData = new List<YahooHistoricalDividendData>();
 			foreach (var line in dividendHistoryCsv.Split('\n').Skip(1))
