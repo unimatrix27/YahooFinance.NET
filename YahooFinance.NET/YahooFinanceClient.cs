@@ -8,8 +8,6 @@ namespace YahooFinance.NET
 {
 	public class YahooFinanceClient
 	{
-		private const int MinimumDateRangeDays = -30;
-
 		private const string BaseUrl = "http://real-chart.finance.yahoo.com/table.csv?s=";
 
 		private enum HistoryType
@@ -67,8 +65,7 @@ namespace YahooFinance.NET
 			return GetHistoricalPriceData(yahooStockCode, startDate, endDate, HistoryType.Day);
 		}
 
-		private List<YahooHistoricalPriceData> GetHistoricalPriceData(string yahooStockCode, DateTime? startDate,
-			DateTime? endDate, HistoryType historyType)
+		private List<YahooHistoricalPriceData> GetHistoricalPriceData(string yahooStockCode, DateTime? startDate, DateTime? endDate, HistoryType historyType)
 		{
 			var dateRangeOption = string.Empty;
 			var addDateRangeOption = startDate.HasValue && endDate.HasValue;
@@ -76,13 +73,6 @@ namespace YahooFinance.NET
 			{
 				var startDateValue = startDate.Value;
 				var endDateValue = endDate.Value;
-
-				//date range must be at least 30 days or the API will return a 404 error
-				var dateRangeIsSmallerThenMinimum = startDateValue > endDateValue.AddDays(MinimumDateRangeDays);
-				if (dateRangeIsSmallerThenMinimum)
-				{
-					startDateValue = endDateValue.AddDays(MinimumDateRangeDays);
-				}
 
 				dateRangeOption = GetDateRangeOption(startDateValue, endDateValue);
 			}
