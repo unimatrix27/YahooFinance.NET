@@ -27,11 +27,10 @@ namespace YahooFinance.NET
 
 		public List<YahooHistoricalPriceData> GetMonthlyHistoricalPriceData(string yahooStockCode, DateTime startDate)
 		{
-			return GetHistoricalPriceData(yahooStockCode, startDate, null, HistoryType.Month);
+			return GetHistoricalPriceData(yahooStockCode, startDate, DateTime.Today, HistoryType.Month);
 		}
 
-		public List<YahooHistoricalPriceData> GetMonthlyHistoricalPriceData(string yahooStockCode, DateTime startDate,
-			DateTime endDate)
+		public List<YahooHistoricalPriceData> GetMonthlyHistoricalPriceData(string yahooStockCode, DateTime startDate, DateTime endDate)
 		{
 			return GetHistoricalPriceData(yahooStockCode, startDate, endDate, HistoryType.Month);
 		}
@@ -43,7 +42,7 @@ namespace YahooFinance.NET
 
 		public List<YahooHistoricalPriceData> GetWeeklyHistoricalPriceData(string yahooStockCode, DateTime startDate)
 		{
-			return GetHistoricalPriceData(yahooStockCode, startDate, null, HistoryType.Week);
+			return GetHistoricalPriceData(yahooStockCode, startDate, DateTime.Today, HistoryType.Week);
 		}
 
 		public List<YahooHistoricalPriceData> GetWeeklyHistoricalPriceData(string yahooStockCode, DateTime startDate,
