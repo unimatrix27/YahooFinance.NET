@@ -125,9 +125,11 @@ namespace YahooFinance.NET
 					var historicalData = response.Content.ReadAsStringAsync().Result;
 
 					if (response.IsSuccessStatusCode)
+					{
 						return historicalData;
-					else
-						return string.Empty;
+					}
+
+					return string.Empty;
 				}
 			}
 		}
