@@ -33,7 +33,7 @@ namespace YahooFinance.NET
 			return GetHistoricalPriceData(yahooStockCode, HistoryType.Month, startDate, endDate);
 		}
 
-		private List<YahooHistoricalPriceData> GetHistoricalPriceData(string yahooStockCode, HistoryType historyType, DateTime? startDate = null, DateTime? endDate = null)
+		private List<YahooHistoricalPriceData> GetHistoricalPriceData(string yahooStockCode, HistoryType historyType, DateTime? startDate, DateTime? endDate)
 		{
 			var historicalDataCsv = GetHistoricalDataAsCsv(yahooStockCode, historyType, startDate, endDate);
 
