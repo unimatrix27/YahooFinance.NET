@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 
@@ -9,9 +10,11 @@ namespace YahooFinance.NET
 {
 	public class YahooFinanceClient
 	{
-		private const string BaseUrl = "http://real-chart.finance.yahoo.com/table.csv?s=";
-	    private const string RealTimeUrl = "http://finance.yahoo.com/d/quotes.csv?s=";
-	    private const string RealTimeSuffix = "&f=abl1pohgt1nsv";
+		private const string BaseUrl = "https://query1.finance.yahoo.com/";
+	    private const string BasePath = "/v7/finance/download/";
+
+        private const string RealTimeUrl = "http://finance.yahoo.com/d/quotes.csv?s=";
+	    private const string RealTimeSuffix = "&f=abl1pohgt1sv"; // removed n for name
 
         private enum HistoryType
 		{
@@ -27,22 +30,22 @@ namespace YahooFinance.NET
 			return exchangeHelper.GetYahooStockCode(exchange, code);
 		}
 
-		public List<YahooHistoricalPriceData> GetDailyHistoricalPriceData(string yahooStockCode, DateTime? startDate = null, DateTime? endDate = null)
+		public List<YahooHistoricalPriceData> GetDailyHistoricalPriceData(string yahooStockCode, DateTimeOffset? startDate = null, DateTimeOffset? endDate = null)
 		{
 			return GetHistoricalPriceData(yahooStockCode, HistoryType.Day, startDate, endDate);
 		}
 
-		public List<YahooHistoricalPriceData> GetWeeklyHistoricalPriceData(string yahooStockCode, DateTime? startDate = null, DateTime? endDate = null)
+		public List<YahooHistoricalPriceData> GetWeeklyHistoricalPriceData(string yahooStockCode, DateTimeOffset? startDate = null, DateTimeOffset? endDate = null)
 		{
 			return GetHistoricalPriceData(yahooStockCode, HistoryType.Week, startDate, endDate);
 		}
 
-		public List<YahooHistoricalPriceData> GetMonthlyHistoricalPriceData(string yahooStockCode, DateTime? startDate = null, DateTime? endDate = null)
+		public List<YahooHistoricalPriceData> GetMonthlyHistoricalPriceData(string yahooStockCode, DateTimeOffset? startDate = null, DateTimeOffset? endDate = null)
 		{
 			return GetHistoricalPriceData(yahooStockCode, HistoryType.Month, startDate, endDate);
 		}
 
-		public List<YahooHistoricalDividendData> GetHistoricalDividendData(string yahooStockCode, DateTime? startDate = null, DateTime? endDate = null)
+		public List<YahooHistoricalDividendData> GetHistoricalDividendData(string yahooStockCode, DateTimeOffset? startDate = null, DateTimeOffset? endDate = null)
 		{
 			var dividendHistoryCsv = GetHistoricalDataAsCsv(yahooStockCode, HistoryType.DividendHistory, startDate, endDate);
 
@@ -67,7 +70,7 @@ namespace YahooFinance.NET
 			return historicalDevidendData;
 		}
 
-		private List<YahooHistoricalPriceData> GetHistoricalPriceData(string yahooStockCode, HistoryType historyType, DateTime? startDate, DateTime? endDate)
+		private List<YahooHistoricalPriceData> GetHistoricalPriceData(string yahooStockCode, HistoryType historyType, DateTimeOffset? startDate, DateTimeOffset? endDate)
 		{
 			var historicalDataCsv = GetHistoricalDataAsCsv(yahooStockCode, historyType, startDate, endDate);
 
@@ -88,8 +91,8 @@ namespace YahooFinance.NET
 					High = decimal.Parse(values[2], CultureInfo.InvariantCulture),
 					Low = decimal.Parse(values[3], CultureInfo.InvariantCulture),
 					Close = decimal.Parse(values[4], CultureInfo.InvariantCulture),
-					Volume = long.Parse(values[5], CultureInfo.InvariantCulture),
-					AdjClose = decimal.Parse(values[6], CultureInfo.InvariantCulture)
+				    AdjClose = decimal.Parse(values[5], CultureInfo.InvariantCulture),
+                    Volume = long.Parse(values[6], CultureInfo.InvariantCulture)
 				};
 				historicalPriceData.Add(newPriceData);
 			}
@@ -97,7 +100,7 @@ namespace YahooFinance.NET
 			return historicalPriceData;
 		}
 
-		private string GetHistoricalDataAsCsv(string yahooStockCode, HistoryType historyType, DateTime? startDate, DateTime? endDate)
+		private string GetHistoricalDataAsCsv(string yahooStockCode, HistoryType historyType, DateTimeOffset? startDate, DateTimeOffset? endDate)
 		{
 			var dateRangeOption = string.Empty;
 			var addDateRangeOption = startDate.HasValue && endDate.HasValue;
@@ -110,7 +113,7 @@ namespace YahooFinance.NET
 			}
 
 			var historyTypeOption = GetHistoryType(historyType);
-			var options = $"{dateRangeOption}{historyTypeOption}";
+			var options = $"?{dateRangeOption}{historyTypeOption}";
 
 			var historicalDataCsv = YahooApiRequest(yahooStockCode, options);
 
@@ -122,22 +125,22 @@ namespace YahooFinance.NET
 	        var RealTimeDataCsv = GetRealTimeDataAsCsv(yahooStockCode);
 
 
-            var values = RealTimeDataCsv.Replace("\"", "").Split(',');
+            var values = RealTimeDataCsv.Split(',');
 
 
             var realTimeData = new YahooRealTimeData
                 {
-                    Ask = decimal.Parse(values[0], CultureInfo.InvariantCulture),
-                    Bid = decimal.Parse(values[1], CultureInfo.InvariantCulture),
-                    Last = decimal.Parse(values[2], CultureInfo.InvariantCulture),
-                    PreviousClose = decimal.Parse(values[3], CultureInfo.InvariantCulture),
-                    Open = decimal.Parse(values[4], CultureInfo.InvariantCulture),
-	                High = decimal.Parse(values[5], CultureInfo.InvariantCulture),
-	                Low = decimal.Parse(values[6], CultureInfo.InvariantCulture),
-                    LastTradeTime = DateTime.Parse(values[7], CultureInfo.InvariantCulture),
-                    Name = values[8], 
-                    Symbol = values[9],
-	                Volume = long.Parse(values[10], CultureInfo.InvariantCulture),
+                    Last =  decimal.Parse(values[2].Replace("\"", ""), CultureInfo.InvariantCulture),
+                    Ask = values[0] == "N/A" ? decimal.Parse(values[2].Replace("\"", ""), CultureInfo.InvariantCulture) : decimal.Parse(values[0].Replace("\"", ""), CultureInfo.InvariantCulture),
+                    Bid = values[1] == "N/A" ? decimal.Parse(values[2].Replace("\"", ""), CultureInfo.InvariantCulture) : decimal.Parse(values[1].Replace("\"", ""), CultureInfo.InvariantCulture),
+                    PreviousClose = decimal.Parse(values[3].Replace("\"", ""), CultureInfo.InvariantCulture),
+                    Open = decimal.Parse(values[4].Replace("\"", ""), CultureInfo.InvariantCulture),
+	                High = decimal.Parse(values[5].Replace("\"", ""), CultureInfo.InvariantCulture),
+	                Low = decimal.Parse(values[6].Replace("\"", ""), CultureInfo.InvariantCulture),
+                    LastTradeTime = DateTime.Parse(values[7].Replace("\"", ""), CultureInfo.InvariantCulture),
+                    //Name = values[8].Replace("\"", ""), 
+                    Symbol = values[8].Replace("\"", ""),
+	                Volume = long.Parse(values[9].Replace("\"", ""), CultureInfo.InvariantCulture)
                 };
 
 	        return realTimeData;
@@ -152,24 +155,31 @@ namespace YahooFinance.NET
 	    }
 
         private string YahooApiRequest(string yahooStockCode, string options)
-		{
-			var requestUrl = $"{BaseUrl}{yahooStockCode}{options}";
+        {
+            var baseAddress = new Uri(BaseUrl);
+            var requestUrl = $"{BasePath}{yahooStockCode}{options}&crumb=sV4uFu6Cw4D";
+            var cookieContainer = new CookieContainer();
+            cookieContainer.Add(baseAddress, new Cookie("B", "HERECOMESTHEPERSONALCODE"));
+            using (var handler = new HttpClientHandler() { UseCookies = false })
+            {
+                using (var client = new HttpClient(handler) { BaseAddress = baseAddress })
+                {
+                    var message = new HttpRequestMessage(HttpMethod.Get, BaseUrl+requestUrl);
+                    message.Headers.Add("Cookie", "B=ftp66vtci2hub&b=3&s=3c;");
+                    using (var response = client.SendAsync(message).Result)
+                    {
+                        var historicalData = response.Content.ReadAsStringAsync().Result;
 
-			using (var client = new HttpClient())
-			{
-				using (var response = client.GetAsync(requestUrl).Result)
-				{
-					var historicalData = response.Content.ReadAsStringAsync().Result;
+                        if (response.IsSuccessStatusCode)
+                        {
+                            return historicalData;
+                        }
 
-					if (response.IsSuccessStatusCode)
-					{
-						return historicalData;
-					}
-
-					return string.Empty;
-				}
-			}
-		}
+                        return string.Empty;
+                    }
+                }
+            }
+        }
 	    private string YahooRealTimeApiRequest(string yahooStockCode)
 	    {
 	        var requestUrl = $"{RealTimeUrl}{yahooStockCode}{RealTimeSuffix}";
@@ -196,33 +206,35 @@ namespace YahooFinance.NET
 			switch (type)
 			{
 				case HistoryType.DividendHistory:
-					optionCode = "v";
+					optionCode = "1d&events=dividends";
 					break;
 				case HistoryType.Day:
-					optionCode = "d";
+					optionCode = "1d&events=history";
 					break;
 				case HistoryType.Week:
-					optionCode = "w";
+					optionCode = "1wk&events=history";
 					break;
 				case HistoryType.Month:
-					optionCode = "m";
+					optionCode = "1mo&events=history";
 					break;
 			}
 
-			var option = $"&g={optionCode}";
+			var option = $"&interval={optionCode}";
 			return option;
 		}
 
-		private string GetDateRangeOption(DateTime startDate, DateTime endDate)
+		private string GetDateRangeOption(DateTimeOffset startDate, DateTimeOffset endDate)
 		{
-			var start = $"{GetStartDate(startDate)}";
-			var end = $"{GetEndDate(endDate)}";
+			//var start = $"{GetStartDate(startDate)}";
+			//var end = $"{GetEndDate(endDate)}";
+		    var start = startDate.ToUnixTimeSeconds();
+		    var end = endDate.ToUnixTimeSeconds();
 
-			var option = $"{start}{end}";
+			var option = $"period1={start}&period2={end}";
 			return option;
 		}
 
-		private string GetStartDate(DateTime date)
+		private string GetStartDate(DateTimeOffset date)
 		{
 			// API uses zero-based month numbering
 			var month = $"&a={date.Month - 1}";
@@ -233,7 +245,7 @@ namespace YahooFinance.NET
 			return option;
 		}
 
-		private string GetEndDate(DateTime date)
+		private string GetEndDate(DateTimeOffset date)
 		{
 			// API uses zero-based month numbering
 			var month = $"&d={date.Month - 1}";

@@ -23,6 +23,32 @@ namespace YahooFinance.NET.Tests
 		}
 
 	    [Fact]
+	    public void TestRealtimeDataGerman()
+	    {
+
+	        var symbol = "ARL.DE";
+
+	        var yahooFinance = new YahooFinanceClient();
+
+	        var yahooRealTimeData = yahooFinance.GetRealTimeData(symbol);
+
+	        Assert.Equal("ARL.DE", yahooRealTimeData.Symbol);
+	    }
+
+        [Fact]
+	    public void TestRealtimeDataDirect()
+	    {
+
+	        var symbol = "CSCO";
+
+	        var yahooFinance = new YahooFinanceClient();
+
+	        var yahooRealTimeData = yahooFinance.GetRealTimeData(symbol);
+
+	        Assert.Equal("CSCO", yahooRealTimeData.Symbol);
+	    }
+
+        [Fact]
 	    public void TestRealtimeData()
 	    {
 	        var exchange = "ASX";
@@ -43,9 +69,9 @@ namespace YahooFinance.NET.Tests
 
 			var yahooFinance = new YahooFinanceClient();
 			var yahooStockCode = yahooFinance.GetYahooStockCode(exchange, symbol);
-			var yahooPriceHistory = yahooFinance.GetDailyHistoricalPriceData(yahooStockCode, new DateTime(2016, 7, 1), new DateTime(2016, 7, 30));
+			var yahooPriceHistory = yahooFinance.GetDailyHistoricalPriceData(yahooStockCode, new DateTime(2017, 1, 1), new DateTime(2017, 1, 30));
 
-			Assert.Equal(21, yahooPriceHistory.Count);
+            Assert.Equal(19, yahooPriceHistory.Count);
 		}
 
 		[Fact]
@@ -56,9 +82,9 @@ namespace YahooFinance.NET.Tests
 
 			var yahooFinance = new YahooFinanceClient();
 			var yahooStockCode = yahooFinance.GetYahooStockCode(exchange, symbol);
-			var yahooPriceHistory = yahooFinance.GetWeeklyHistoricalPriceData(yahooStockCode, new DateTime(2016, 7, 1), new DateTime(2016, 7, 30));
+			var yahooPriceHistory = yahooFinance.GetWeeklyHistoricalPriceData(yahooStockCode, new DateTime(2017, 1, 1), new DateTime(2017, 4, 30));
 
-			Assert.Equal(5, yahooPriceHistory.Count);
+			Assert.Equal(17, yahooPriceHistory.Count);
 		}
 
 		[Fact]
@@ -69,9 +95,9 @@ namespace YahooFinance.NET.Tests
 
 			var yahooFinance = new YahooFinanceClient();
 			var yahooStockCode = yahooFinance.GetYahooStockCode(exchange, symbol);
-			var yahooPriceHistory = yahooFinance.GetMonthlyHistoricalPriceData(yahooStockCode, new DateTime(2016, 7, 1), new DateTime(2016, 7, 30));
+			var yahooPriceHistory = yahooFinance.GetMonthlyHistoricalPriceData(yahooStockCode, new DateTime(2017, 1, 1), new DateTime(2017, 4, 30));
 
-			Assert.Equal(1, yahooPriceHistory.Count);
+			Assert.Equal(3, yahooPriceHistory.Count);
 		}
 
 		[Fact]
@@ -82,9 +108,9 @@ namespace YahooFinance.NET.Tests
 
 			var yahooFinance = new YahooFinanceClient();
 			var yahooStockCode = yahooFinance.GetYahooStockCode(exchange, symbol);
-			var yahooDividendHistory = yahooFinance.GetHistoricalDividendData(yahooStockCode, new DateTime(2016, 1, 1), new DateTime(2016, 7, 30));
+			var yahooDividendHistory = yahooFinance.GetHistoricalDividendData(yahooStockCode, new DateTime(2017, 1, 1), new DateTime(2017, 4, 30));
 
-			Assert.Equal(1, yahooDividendHistory.Count);
+            Assert.Equal(1, yahooDividendHistory.Count);
 		}
 	}
 }
